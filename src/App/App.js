@@ -1,11 +1,14 @@
 import React from 'react';
-
+import Home from './../Pages/Home'
+import Header from './../Components/Header'
+import { Switch, Route } from 'react-router-dom';
 const App = () => {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+      <Header />
+      <Switch>
+        <Route exact path="/" component={Home} />
+      </Switch>
     </>
   );
 }

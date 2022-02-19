@@ -9,9 +9,9 @@ const axiosGitHubGrapQL = axios.create({
 })
 
 
-export const getUserRepoList = async (userName) => {
+export const getUserRepoList = async (userName,cursor) => {
     return await axiosGitHubGrapQL
-        .post('', { query: GET_USER_REPO_QUERY(userName) })
+        .post('', { query: GET_USER_REPO_QUERY(userName,cursor) })
 }
 
 export const getCurrentUser = async () => {

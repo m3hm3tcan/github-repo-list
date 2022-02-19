@@ -26,7 +26,6 @@ const Search = ({callBack}) => {
     let search = window.location.search
     let params = new URLSearchParams(search)
     let userName = params.get('user')
-    console.log(userName)
     if(userName !== '' ){
       callBack(e,userName)
     }    

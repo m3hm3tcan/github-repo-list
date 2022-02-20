@@ -22,7 +22,7 @@ const RepoItem = ({ data }) => {
                                {`Total issues : ${repo.issues.totalCount}`}
                             </div>
                             <div className="font-small">
-                               {/* {`Last Commit Date: ${repo.defaultBranchRef.target.history.edges[0].node.committedDate}`} */}
+                               {`Last Commit Date: ${new Date(repo.defaultBranchRef.target.history.edges[0].node.committedDate).toLocaleDateString()}`}
                             </div>
                         </div>
                         <a

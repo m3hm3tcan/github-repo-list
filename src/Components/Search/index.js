@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory  } from 'react-router-dom';
 
-const Search = ({callBack}) => {
+const Search = ({callBack, inputField}) => {
 
   const [query, setQuery] = useState('')
   const history = useHistory();
+
+  useEffect(()=>{
+    if(inputField !== null){
+      setQuery(inputField)
+    }
+  },[inputField])
 
   useEffect(()=>{
     const params= new URLSearchParams()
@@ -28,7 +34,7 @@ const Search = ({callBack}) => {
     let userName = params.get('user')
     if(userName !== '' ){
       callBack(e,userName)
-    }    
+    }
   }
 
   return (

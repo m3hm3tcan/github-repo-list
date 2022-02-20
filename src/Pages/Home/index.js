@@ -5,24 +5,26 @@ import RepoList from './../../Components/RepoList'
 import Loading from './../../Components/Loading'
 import Pagination from '../../Components/Pagination'
 import { constant_values } from '../../Services/utils/constants'
-import ErrorBoundary from '../../Services/ErrorBoundary';
+import ErrorBoundary from '../../Services/ErrorBoundary'
+import MyRepo from '../../Components/MyRepo'
 
 const Home = () => {
-  const [currentUser, setCurrentUser] = useState()
+  const [currentUser, setCurrentUser] = useState({ user: null, isMyList: false })
   const [searchResult, setSearchResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false);
   const [searchInput, setSearchInput] = useState();
+  const [inputField,setInputField] = useState(null);
 
   useEffect(() => {
+    //get crurent user info
     const fecthUser = async () => {
       let data = {};
       const getUser = await getCurrentUser().then(res => {
         data = res.data.data.viewer;
-      })
-        .catch((error) => console.log(error))
+      }).catch((error) => console.log(error))
 
       setTimeout(getUser, 1000)
-      setCurrentUser(data)
+      setCurrentUser({ ...currentUser, user: data })
     }
     fecthUser();
   }, [])
@@ -30,6 +32,7 @@ const Home = () => {
   const handleSubmit = async (e, userName) => {
     e.preventDefault()
     setSearchInput(userName)
+    setInputField(userName)
     await fetchData(userName, `first:${constant_values.page_count}, after:null`)
   }
 
@@ -37,16 +40,15 @@ const Home = () => {
     setIsLoading(true)
     await getUserRepoList(userName, cursor).then(res => {
       setSearchResult(res.data)
+      if (res.data.data.user === null || res.data.data.user.login !== currentUser.user.login) {
+        setCurrentUser({ ...currentUser, isMyList: false })
+      }
     })
       .catch((error) => console.log(error))
       .finally(() => {
         setIsLoading(false)
       });
   }
-
-  useEffect(() => {
-    console.log(searchResult)
-  }, [searchResult])
 
   const handlePage = async (isNextPage) => {
     let cursor = 'first:5, after:null' // for control
@@ -59,13 +61,21 @@ const Home = () => {
     await fetchData(searchInput, cursor)
   }
 
+  const handleMyRepo = (e, userName) => {
+    setCurrentUser({ ...currentUser, isMyList: true })
+    handleSubmit(e, userName)
+    setInputField(userName)
+  }
+
   return (
     <ErrorBoundary>
-      <div className='items-center min-h-screen from-cyan-100 via-pink-200 to-red-200 bg-gradient-to-br pt-24' >
-        <Search callBack={handleSubmit} />
-        {isLoading && <Loading />}
-        {!isLoading && searchResult !== null && <><RepoList data={searchResult} /> <Pagination data={searchResult} callBack={handlePage} /></>}
-
+      <div className='via-pink-200 to-red-200 bg-gradient-to-br from-cyan-100 '>
+        {currentUser.user && <MyRepo user={currentUser.user} callBack={handleMyRepo} />}
+        <div className='items-center min-h-screen pt-24' >
+          <Search callBack={handleSubmit} inputField={inputField}/>
+          {isLoading && <Loading />}
+          {!isLoading && searchResult !== null && <><RepoList data={searchResult} /> <Pagination data={searchResult} callBack={handlePage} /></>}
+        </div>
       </div>
     </ErrorBoundary>
   );

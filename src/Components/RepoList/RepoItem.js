@@ -27,7 +27,7 @@ const RepoItem = ({ data }) => {
                         </div>
                         <a
                             className="w-1/4 text-wrap text-center flex text-white text-bold flex-col rounded-md bg-red-500 justify-center items-center mr-2 p-1"
-                            href={repo.url} target="_blank">
+                            href={repo.url} target="_blank" rel="noreferrer">
                             Open in GitHub
                         </a>
                     </div>

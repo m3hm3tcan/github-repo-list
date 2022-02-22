@@ -2,16 +2,17 @@ import React, { useState } from 'react'
 import { GithubIcon, CreateRepoIcon } from './GithubIcons'
 import CreateRepoForm from './CreateRepoForm'
 
-const MyRepo = ({ user, isMyRepo, callBack }) => {
+const MyRepo = ({ user, isMyRepo, callBack, createCallBack }) => {
     const [isOpen, setIsOpen] = useState(false)
 
     const handleClick = (e) => {
         callBack(e, user.login)
     }
 
-    // handleCreate=()=>{
-    //     createCallBack()
-    // }
+    const handleCreate =(newRepo)=>{
+        setIsOpen(false)
+        createCallBack(newRepo)
+    }
 
     return (
         <div className='pt-4'>
@@ -30,7 +31,7 @@ const MyRepo = ({ user, isMyRepo, callBack }) => {
                 <div className="fixed overflow-x-hidden  inset-0 flex z-50">
                     <div className='relative mx-auto  w-auto'>
                         <div className='bg-white'>
-                            <CreateRepoForm closeModal={()=>setIsOpen(false)}/>
+                            <CreateRepoForm closeModal={()=>setIsOpen(false)} handleCreate={handleCreate}/>
                         </div>
                     </div>
                 </div>

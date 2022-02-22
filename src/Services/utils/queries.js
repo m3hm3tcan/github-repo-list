@@ -50,9 +50,29 @@ export const GET_USER_REPO_QUERY = (userName, cursor) => {
       }
     }
   }
-
-  
    `
+  return query
+}
 
+export const CREATE_NEW_REPO = (ownerId,newRepo) => {
+  const query = `
+  mutation{
+            createRepository(input:
+                {
+                  name: "${newRepo.name}",
+                  ownerId: "${ownerId}",
+                  visibility: ${newRepo.visibility},
+                  homepageUrl:"${newRepo.homepageUrl}",
+                  hasWikiEnabled: ${newRepo.hasWikiEnabled},
+                  hasIssuesEnabled:${newRepo.hasIssuesEnabled}
+                }){
+                  repository
+                  {
+                    name
+                    createdAt
+                  }
+                }
+  }
+  `
   return query
 }

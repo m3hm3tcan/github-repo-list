@@ -12,8 +12,7 @@ const Home = () => {
   const [currentUser, setCurrentUser] = useState({ user: null, isMyList: false })
   const [searchResult, setSearchResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false);
-  const [searchInput, setSearchInput] = useState();
-  const [inputField,setInputField] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
     //get crurent user info
@@ -32,7 +31,6 @@ const Home = () => {
   const handleSubmit = async (e, userName) => {
     e.preventDefault()
     setSearchInput(userName)
-    setInputField(userName)
     await fetchData(userName, `first:${constant_values.page_count}, after:null`)
   }
 
@@ -40,8 +38,10 @@ const Home = () => {
     setIsLoading(true)
     await getUserRepoList(userName, cursor).then(res => {
       setSearchResult(res.data)
-      if (res.data.data.user === null || res.data.data.user.login !== currentUser.user.login) {
+      if (userName !== currentUser.user.login) {
         setCurrentUser({ ...currentUser, isMyList: false })
+      }else{
+        setCurrentUser({ ...currentUser, isMyList: true })
       }
     })
       .catch((error) => console.log(error))
@@ -64,15 +64,14 @@ const Home = () => {
   const handleMyRepo = (e, userName) => {
     setCurrentUser({ ...currentUser, isMyList: true })
     handleSubmit(e, userName)
-    setInputField(userName)
   }
 
   return (
     <ErrorBoundary>
       <div className='via-pink-200 to-red-200 bg-gradient-to-br from-cyan-100 '>
-        {currentUser.user && <MyRepo user={currentUser.user} callBack={handleMyRepo} />}
+        {currentUser.user && <MyRepo user={currentUser.user} callBack={handleMyRepo} isMyRepo={currentUser.isMyList}/>}
         <div className='items-center min-h-screen pt-24' >
-          <Search callBack={handleSubmit} inputField={inputField}/>
+          <Search callBack={handleSubmit} inputField={searchInput}/>
           {isLoading && <Loading />}
           {!isLoading && searchResult !== null && <><RepoList data={searchResult} /> <Pagination data={searchResult} callBack={handlePage} /></>}
         </div>

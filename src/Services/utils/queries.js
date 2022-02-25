@@ -16,7 +16,7 @@ export const GET_USER_REPO_QUERY = (userName, cursor) => {
  {
     user(login: "${userName}" ) {
       login
-      repositories(${cursor}) {
+      repositories(${cursor}, orderBy: {field: CREATED_AT, direction: DESC} ) {
         nodes {
           name
           url

@@ -10,7 +10,7 @@ import MyRepo from '../../Components/MyRepo'
 import Alert from './../../Components/Alert'
 
 const Home = () => {
-  const [currentUser, setCurrentUser] = useState({ user: null, isMyList: false })
+  const [currentUser, setCurrentUser] = useState({ user: {}, isMyList: false })
   const [searchResult, setSearchResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -22,7 +22,13 @@ const Home = () => {
       let data = {};
       const getUser = await getCurrentUser().then(res => {
         data = res.data.data.viewer;
-      }).catch((error) => console.log(error))
+      }).catch((error) => {
+        setIsSucces({ type: 'danger', message: error.message })
+      }).finally(()=>{
+        setTimeout(() => {
+          setIsSucces({ type: '', message: '' })
+        }, 2000)
+      })
 
       setTimeout(getUser, 1000)
       setCurrentUser({ ...currentUser, user: data })
@@ -40,15 +46,20 @@ const Home = () => {
     setIsLoading(true)
     await getUserRepoList(userName, cursor).then(res => {
       setSearchResult(res.data)
-      if (userName !== currentUser.user.login) {
+      if (userName === "" || userName !== currentUser.user.login) {
         setCurrentUser({ ...currentUser, isMyList: false })
       } else {
         setCurrentUser({ ...currentUser, isMyList: true })
       }
     })
-      .catch((error) => console.log('error', error))
-      .finally(() => {
+      .catch((error) => {
+        setIsSucces({ type: 'danger', message: error.message })
+      }
+      ).finally(() => {
         setIsLoading(false)
+        setTimeout(() => {
+          setIsSucces({ type: '', message: '' })
+        }, 2000)
       });
   }
 
@@ -64,8 +75,11 @@ const Home = () => {
   }
 
   const handleMyRepo = (e, userName) => {
-    setCurrentUser({ ...currentUser, isMyList: true })
-    handleSubmit(e, userName)
+    console.log(currentUser)
+    if (userName !== "") {
+      setCurrentUser({ ...currentUser, isMyList: true })
+      handleSubmit(e, userName)
+    }
   }
 
   const handleCreate = async (newRepo) => {
@@ -90,7 +104,7 @@ const Home = () => {
     <ErrorBoundary>
       <div className='via-pink-200 to-red-200 bg-gradient-to-br from-cyan-100 '>
         {isSuccess.type !== "" && <Alert type={isSuccess.type} message={isSuccess.message} />}
-        {currentUser.user && <MyRepo user={currentUser.user} callBack={handleMyRepo} isMyRepo={currentUser.isMyList} createCallBack={handleCreate} />}
+        {currentUser.user.hasOwnProperty('login') && <MyRepo user={currentUser.user} callBack={handleMyRepo} isMyRepo={currentUser.isMyList} createCallBack={handleCreate} />}
         <div className='items-center min-h-screen pt-24' >
           <Search callBack={handleSubmit} inputField={searchInput} />
           {isLoading && <Loading />}

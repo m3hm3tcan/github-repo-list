@@ -6,7 +6,6 @@ permissions:
   contents: write
 jobs:
   build-and-deploy:
-    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     environment: development
     env:
@@ -16,7 +15,7 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
         run: echo "REACT_APP_GITHUB_GRAPHQLAPI_URL is $REACT_APP_GITHUB_GRAPHQLAPI_URL"
-        
+
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: |
           npm ci
